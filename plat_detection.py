@@ -157,7 +157,7 @@ detection_process_2 = tkinter.Frame(root)
 detection_process_2.pack(side = tkinter.LEFT, padx=10)
 
 # reading image
-opencv_img = cv2.imread('img/plat-nomor-2.jpg')
+opencv_img = cv2.imread('img/plat-nomor-2-noise.jpg')
 opencv_img = incIntensity(opencv_img, 10)
 
 step_0_label = tkinter.Label(detection_process_1, text = "Original Image (0)").pack(side = tkinter.TOP)
@@ -209,7 +209,11 @@ for c in step_6_cvimg:
     x, y, w, h = cv2.boundingRect(c)
     ROI = step_5_cvimg[y:y+h, x:x+w]
     break
-cv2.imshow('ROI', ROI)
+
+step_6_label = tkinter.Label(detection_process_2, text='Cropped (6)').pack(side = tkinter.TOP)
+step_6_img = cv2ToImage(ROI)
+step_6_img = ImageTk.PhotoImage(step_6_img)
+step_6_show = tkinter.Label(detection_process_2, image=step_6_img).pack(side = tkinter.TOP)
 
 ocr_result = pytesseract.image_to_string(ROI, config=custom_config)
 
