@@ -195,12 +195,23 @@ step_4_show = tkinter.Label(detection_process_2, image=step_4_img).pack(side = t
 # applying k-means segmentation
 # source https://machinelearningknowledge.ai/image-segmentation-in-python-opencv/ [1]
 step_5_cvimg = kMeansSegmentation(step_4_cvimg)
+step_5_cvimg = cv2.cvtColor(step_5_cvimg, cv2.COLOR_BGR2GRAY)
 step_5_label = tkinter.Label(detection_process_2, text='Segmentation (5)').pack(side = tkinter.TOP)
 step_5_img = cv2ToImage(step_5_cvimg)
 step_5_img = ImageTk.PhotoImage(step_5_img)
 step_5_show = tkinter.Label(detection_process_2, image=step_5_img).pack(side = tkinter.TOP)
 
-ocr_result = pytesseract.image_to_string(step_5_cvimg, config=custom_config)
+step_6_cvimg = cv2.findContours(step_5_cvimg, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_TC89_L1)
+step_6_cvimg = step_6_cvimg[0] if len(step_6_cvimg) == 2 else step_6_cvimg[1]
+step_6_cvimg = sorted(step_6_cvimg, key = cv2.contourArea, reverse = True)
+
+for c in step_6_cvimg:
+    x, y, w, h = cv2.boundingRect(c)
+    ROI = step_5_cvimg[y:y+h, x:x+w]
+    break
+cv2.imshow('ROI', ROI)
+
+ocr_result = pytesseract.image_to_string(ROI, config=custom_config)
 
 if(re.search("^[A-Z]", ocr_result) == False):
     to_list = list(ocr_result)
