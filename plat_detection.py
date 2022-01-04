@@ -193,6 +193,7 @@ step_4_img = cv2ToImage(step_4_cvimg)
 step_4_img = ImageTk.PhotoImage(step_4_img)
 step_4_show = tkinter.Label(detection_process_2, image=step_4_img).pack(side = tkinter.TOP)
 
+# applying automatic crop
 step_5_cvimg = cv2.findContours(step_4_cvimg, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_TC89_L1)
 step_5_cvimg = step_5_cvimg[0] if len(step_5_cvimg) == 2 else step_5_cvimg[1]
 step_5_cvimg = sorted(step_5_cvimg, key = cv2.contourArea, reverse = True)
@@ -202,10 +203,10 @@ for c in step_5_cvimg:
     ROI = step_4_cvimg[y:y+h, x:x+w]
     break
 
-step_6_label = tkinter.Label(detection_process_2, text='Cropped (6)').pack(side = tkinter.TOP)
-step_6_img = cv2ToImage(ROI)
-step_6_img = ImageTk.PhotoImage(step_6_img)
-step_6_show = tkinter.Label(detection_process_2, image=step_6_img).pack(side = tkinter.TOP)
+step_5_label = tkinter.Label(detection_process_2, text='Cropped (6)').pack(side = tkinter.TOP)
+step_5_img = cv2ToImage(ROI)
+step_5_img = ImageTk.PhotoImage(step_5_img)
+step_5_show = tkinter.Label(detection_process_2, image=step_5_img).pack(side = tkinter.TOP)
 
 ocr_result = pytesseract.image_to_string(ROI, config=custom_config)
 
