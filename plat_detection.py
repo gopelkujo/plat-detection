@@ -158,11 +158,7 @@ detection_process_2 = tkinter.Frame(root)
 detection_process_2.pack(side = tkinter.LEFT, padx=10)
 
 # reading image
-<<<<<<< HEAD
 opencv_img = cv2.imread('img/plat-nomor-6.jpg')
-=======
-opencv_img = cv2.imread('img/plat-nomor-2-noise.jpg')
->>>>>>> f2b4701d50fd0acf4e1f24818834a4023203f1be
 opencv_img = incIntensity(opencv_img, 10)
 
 step_0_label = tkinter.Label(detection_process_1, text = "Original Image (0)").pack(side = tkinter.TOP)
