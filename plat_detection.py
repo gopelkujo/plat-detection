@@ -158,7 +158,7 @@ detection_process_2 = tkinter.Frame(root)
 detection_process_2.pack(side = tkinter.LEFT, padx=10)
 
 # reading image
-opencv_img = cv2.imread('img/plat-nomor-6.jpg')
+opencv_img = cv2.imread('img/plat-nomor-2-noise.jpg')
 opencv_img = incIntensity(opencv_img, 10)
 
 step_0_label = tkinter.Label(detection_process_1, text = "Original Image (0)").pack(side = tkinter.TOP)
@@ -193,22 +193,13 @@ step_4_img = cv2ToImage(step_4_cvimg)
 step_4_img = ImageTk.PhotoImage(step_4_img)
 step_4_show = tkinter.Label(detection_process_2, image=step_4_img).pack(side = tkinter.TOP)
 
-# applying k-means segmentation
-# source https://machinelearningknowledge.ai/image-segmentation-in-python-opencv/ [1]
-step_5_cvimg = kMeansSegmentation(step_4_cvimg)
-step_5_cvimg = cv2.cvtColor(step_5_cvimg, cv2.COLOR_BGR2GRAY)
-step_5_label = tkinter.Label(detection_process_2, text='Segmentation (5)').pack(side = tkinter.TOP)
-step_5_img = cv2ToImage(step_5_cvimg)
-step_5_img = ImageTk.PhotoImage(step_5_img)
-step_5_show = tkinter.Label(detection_process_2, image=step_5_img).pack(side = tkinter.TOP)
+step_5_cvimg = cv2.findContours(step_4_cvimg, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_TC89_L1)
+step_5_cvimg = step_5_cvimg[0] if len(step_5_cvimg) == 2 else step_5_cvimg[1]
+step_5_cvimg = sorted(step_5_cvimg, key = cv2.contourArea, reverse = True)
 
-step_6_cvimg = cv2.findContours(step_5_cvimg, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_TC89_L1)
-step_6_cvimg = step_6_cvimg[0] if len(step_6_cvimg) == 2 else step_6_cvimg[1]
-step_6_cvimg = sorted(step_6_cvimg, key = cv2.contourArea, reverse = True)
-
-for c in step_6_cvimg:
+for c in step_5_cvimg:
     x, y, w, h = cv2.boundingRect(c)
-    ROI = step_5_cvimg[y:y+h, x:x+w]
+    ROI = step_4_cvimg[y:y+h, x:x+w]
     break
 
 step_6_label = tkinter.Label(detection_process_2, text='Cropped (6)').pack(side = tkinter.TOP)
