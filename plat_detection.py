@@ -141,6 +141,7 @@ def incIntensity(opencv_img, value):
 def letterCorrection(number):
     switcher = {
         '1': 'I',
+        '2': 'Z',
         '3': 'B',
         '4': 'A',
         '5': 'B',
@@ -157,7 +158,7 @@ detection_process_2 = tkinter.Frame(root)
 detection_process_2.pack(side = tkinter.LEFT, padx=10)
 
 # reading image
-opencv_img = cv2.imread('img/plat-nomor-2.jpg')
+opencv_img = cv2.imread('img/plat-nomor-6.jpg')
 opencv_img = incIntensity(opencv_img, 10)
 
 step_0_label = tkinter.Label(detection_process_1, text = "Original Image (0)").pack(side = tkinter.TOP)
@@ -210,7 +211,7 @@ if(re.search("^[A-Z]", ocr_result) == False):
 else:
     print("Checked format!")
 
-print(ocr_result)
+print(ocr_result.upper())
 
 # make window stay
 root.mainloop()
