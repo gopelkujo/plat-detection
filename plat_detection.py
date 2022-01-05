@@ -3,19 +3,21 @@ import cv2, tkinter, re, numpy as np, pytesseract
 from PIL import ImageTk, Image
 from svglib.svglib import svg2rlg
 from reportlab.graphics import renderPM
+from tkinter import Text, font as tkfont
 
 # constant variable
-canvas_size_x = 280
-canvas_size_y = 280
-window_size_x = 400
-window_size_y = 600
+canvas_size_x = 200
+canvas_size_y = 200
+window_size_x = 600
+window_size_y = 450
 custom_config = r'--oem 3 --psm 6'
 
 # set up window
 root = tkinter.Tk()
 root.title('Plat Detection')
+root.configure(background='#202020')
 # root.attributes('-zoomed', True)
-# root.geometry(str(window_size_x) + 'x' + str(window_size_y))
+root.geometry(str(window_size_x) + 'x' + str(window_size_y))
 
 def imageToCv2(img):
     img_cv = img
@@ -152,43 +154,66 @@ def letterCorrection(number):
     return switcher.get(str(number))
 
 # add frame to window
-detection_process_1 = tkinter.Frame(root)
+detection_process_1 = tkinter.Frame(root, bg='#202020')
 detection_process_1.pack(side = tkinter.LEFT, padx=10)
-detection_process_2 = tkinter.Frame(root)
+# detection_process_1.pack_propagate(0)
+detection_process_2 = tkinter.Frame(root, bg='#202020')
 detection_process_2.pack(side = tkinter.LEFT, padx=10)
+option_frame = tkinter.Frame(root, bg='#202020', height=500, width=160)
+option_frame.pack(side = tkinter.LEFT, padx=10)
+option_frame.pack_propagate(0)
+
+myFont = tkfont.Font(size=8)
+
+# File Section
+select_file_frame = tkinter.Frame(option_frame, bg='#202020', highlightbackground='white', highlightthickness=1, width=156, height=63, pady=5)
+select_file_frame.pack(side=tkinter.TOP, pady=25)
+select_file_frame.pack_propagate(0)
+file_name_label = tkinter.Label(select_file_frame, text='No file selected.', bg='#202020', fg='white', font=myFont).pack()
+btn_select_file = tkinter.Button(select_file_frame, text='Select File', height=1, font=myFont, bd=0, highlightthickness=0).pack(pady=2)
+
+# Result Section
+result_frame = tkinter.Frame(option_frame, bg='#202020', highlightbackground='white', highlightthickness=1, width=156, height=63, pady=5)
+result_frame.pack(side=tkinter.TOP)
+result_frame.pack_propagate(0)
+result_label = tkinter.Label(result_frame, text='Result', bg='#202020', fg='white', font=myFont).pack()
+result_text = tkinter.Text(result_frame, height=1, width='15', bd=0, highlightthickness=0, font=myFont).pack()
+# btn_save_result = tkinter.Button(result_frame, text='Save All Result', height=1, width=13, font=myFont, bd=0, highlightthickness=0).pack(pady=2)
+
+btn_start = tkinter.Button(option_frame, text='Start Process', font=myFont, bd=0, highlightthickness=0, bg='#0083DB', fg='white', width=15, height=3).pack(side=tkinter.BOTTOM, pady=10)
 
 # reading image
 opencv_img = cv2.imread('img/plat-nomor-2-noise.jpg')
 opencv_img = incIntensity(opencv_img, 10)
 
-step_0_label = tkinter.Label(detection_process_1, text = "Original Image (0)").pack(side = tkinter.TOP)
+step_0_label = tkinter.Label(detection_process_1, text = 'Original Image (0)', bg='#202020', fg='white').pack(side = tkinter.TOP)
 step_0_img = ImageTk.PhotoImage(cv2ToImage(opencv_img))
 step_0_show = tkinter.Label(detection_process_1, image=step_0_img).pack(side = tkinter.TOP)
 
 # applying grey scale filter
 step_1_cvimg = greyScaleFilter(opencv_img)
-step_1_label = tkinter.Label(detection_process_1, text = "Greyscale Image (1)").pack(side = tkinter.TOP)
+step_1_label = tkinter.Label(detection_process_1, text = 'Greyscale Image (1)', bg='#202020', fg='white').pack(side = tkinter.TOP)
 step_1_img = cv2ToImage(step_1_cvimg)
 step_1_img = ImageTk.PhotoImage(step_1_img)
 step_1_show = tkinter.Label(detection_process_1, image=step_1_img).pack(side = tkinter.TOP)
 
 # applying gausiian blur filter
 step_2_cvimg = gaussianBlurFilter(step_1_cvimg)
-step_2_label = tkinter.Label(detection_process_1, text = "Gaussian Blur Image (2)").pack(side = tkinter.TOP)
+step_2_label = tkinter.Label(detection_process_1, text = 'Gaussian Blur Image (2)', bg='#202020', fg='white').pack(side = tkinter.TOP)
 step_2_img = cv2ToImage(step_2_cvimg)
 step_2_img = ImageTk.PhotoImage(step_2_img)
 step_2_show = tkinter.Label(detection_process_1, image=step_2_img).pack(side = tkinter.TOP)
 
 # applying otsu binarization
 step_3_cvimg = tresholdFilter(step_2_cvimg)
-step_3_label = tkinter.Label(detection_process_2, text='Otsu Binarization (3)').pack(side = tkinter.TOP)
+step_3_label = tkinter.Label(detection_process_2, text='Otsu Binarization (3)', bg='#202020', fg='white').pack(side = tkinter.TOP)
 step_3_img = cv2ToImage(step_3_cvimg)
 step_3_img = ImageTk.PhotoImage(step_3_img)
 step_3_show = tkinter.Label(detection_process_2, image=step_3_img).pack(side = tkinter.TOP)
 
 # applying morphology transformation (erosion)
 step_4_cvimg = erosionFilter(step_3_cvimg)
-step_4_label = tkinter.Label(detection_process_2, text='Erosion (4)').pack(side = tkinter.TOP)
+step_4_label = tkinter.Label(detection_process_2, text='Erosion (4)', bg='#202020', fg='white').pack(side = tkinter.TOP)
 step_4_img = cv2ToImage(step_4_cvimg)
 step_4_img = ImageTk.PhotoImage(step_4_img)
 step_4_show = tkinter.Label(detection_process_2, image=step_4_img).pack(side = tkinter.TOP)
@@ -202,10 +227,10 @@ for c in step_5_cvimg:
     ROI = step_4_cvimg[y:y+h, x:x+w]
     break
 
-step_6_label = tkinter.Label(detection_process_2, text='Cropped (6)').pack(side = tkinter.TOP)
-step_6_img = cv2ToImage(ROI)
-step_6_img = ImageTk.PhotoImage(step_6_img)
-step_6_show = tkinter.Label(detection_process_2, image=step_6_img).pack(side = tkinter.TOP)
+step_5_label = tkinter.Label(detection_process_2, text='Cropped (6)', bg='#202020', fg='white').pack(side = tkinter.TOP)
+step_5_img = cv2ToImage(ROI)
+step_5_img = ImageTk.PhotoImage(step_5_img)
+step_5_show = tkinter.Label(detection_process_2, image=step_5_img).pack(side = tkinter.TOP)
 
 ocr_result = pytesseract.image_to_string(ROI, config=custom_config)
 
