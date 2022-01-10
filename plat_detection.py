@@ -158,7 +158,8 @@ detection_process_2 = tkinter.Frame(root)
 detection_process_2.pack(side = tkinter.LEFT, padx=10)
 
 # reading image
-opencv_img = cv2.imread('img/plat-nomor-2-noise.jpg')
+file_name = 'img/plat-nomor-2-noise.jpg'
+opencv_img = cv2.imread(file_name)
 opencv_img = incIntensity(opencv_img, 10)
 
 step_0_label = tkinter.Label(detection_process_1, text = "Original Image (0)").pack(side = tkinter.TOP)
@@ -210,15 +211,17 @@ step_5_show = tkinter.Label(detection_process_2, image=step_5_img).pack(side = t
 
 ocr_result = pytesseract.image_to_string(ROI, config=custom_config)
 
+print(' --- RESULT ---')
+print('[FILE] ' + str(file_name))
 if(re.search("^[A-Z]", ocr_result) == False):
     to_list = list(ocr_result)
     to_list[0] = letterCorrection(to_list[0])
     ocr_result = "".join(to_list)
-    print("Fixed format!")
+    print('[FORMAT] Format plat nomor telah diperbaiki!')
 else:
-    print("Checked format!")
+    print('[FORMAT] Format plat nomor sudah dicek.')
 
-print(ocr_result.upper())
+print('[PLAT] ' + str(ocr_result.upper()))
 
 # make window stay
 root.mainloop()
